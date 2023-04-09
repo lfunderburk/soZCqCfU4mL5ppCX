@@ -7,6 +7,7 @@ colorama==0.4.6
 contourpy==1.0.7
 cookiecutter==2.1.1
 cycler==0.11.0
+duckdb-engine
 fonttools==4.39.2
 idna==3.4
 imbalanced-learn==0.10.1
@@ -14,7 +15,7 @@ importlib-resources==5.12.0
 Jinja2==3.1.2
 jinja2-time==0.2.0
 jupytext==1.14.5
-jupysql==0.6.6
+jupysql==0.7.0
 keras==2.12.0
 kiwisolver==1.4.4
 MarkupSafe==2.1.2
@@ -50,6 +51,7 @@ tensorflow-estimator==2.12.0
 tensorflow-io-gcs-filesystem==0.32.0
 sqlarchemy==2.0.7
 sqlparse==0.4.3
+sqlglot>=11.3.7
 six==1.16.0
 text-unidecode==1.3
 urllib3==1.26.15
