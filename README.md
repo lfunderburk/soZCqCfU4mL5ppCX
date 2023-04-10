@@ -42,21 +42,35 @@ $y$ - has the client subscribed to a term deposit? (binary)
 
 ![](./reports/figures/num_subscribers_job.png)
 
+It appears that the group of customers subscribed to a term deposit were predominantly workers in management positions, followed by workers in blue-collar positions, technicians and workers in admin roles. 
+
+Representation decreases dramatically for employees in services, or employees who are either retired, self employed, unemployed, a student, or a housemaid. 
+
+This suggests that subscribed customers may enjoy higher income stability. 
+
 ### Find the number of customers who subscribed to a term deposit (y = 'yes') by marital status:
 
 ![](./reports/figures/num_subscribers_marital.png)
+
+Customers whose marital status is married, also subscribed to a term deposit at higher rate than single or divorced customers. It is worth noting that there were at least 3 times as many single customers that divorced customers. 
 
 ### Find the number of customers who subscribed to a term deposit (y = 'yes') by education level:
 
 ![](./reports/figures/num_subscribers_education.png)
 
+The two most prominent levels of education completed by customers subscribed to a term deposit was secondary education, followed by tertiary education (university, trade schools, colleges).
+
 ### Find the number of customers who subscribed to a term deposit (y = 'yes') by housing loan status:
 
 ![](./reports/figures/num_subscribers_housing.png)
 
+The breakdown of customers with a term deposit is broken down quite similarly, when breaking them down by housing loan status (did have a loan status, or did not have a loan status).
+
 ### Find the number of customers who subscribed to a term deposit (y = 'yes') by age bracket and marital status:
 
 ![](./reports/figures/num_customers_m_bracket.png)
+
+Customers between 30 and 39 appeared to represent a large percentage of customers with a term deposit, whether they were single or married. Of those customers that were single, customers aged 20 to 29 were the next most represented group. Of those customers that were married, those aged 40-59 were the next most represented group. 
 
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
