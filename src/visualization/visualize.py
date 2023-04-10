@@ -42,7 +42,8 @@ def plot_bar_query(df_jobs, x, y, title, filename, hue=None):
     """
 
     plt.figure(figsize=(10, 5))
-    sns.barplot(x=x, y=y, data=df_jobs, hue=hue)
+    ax = sns.barplot(x=x, y=y, data=df_jobs, hue=hue)
+    ax.bar_label(ax.containers[0])
     plt.title(title)
     
     # Save the plot
