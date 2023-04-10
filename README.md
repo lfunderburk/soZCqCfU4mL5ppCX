@@ -1,6 +1,14 @@
 Success rate improvement
 ==============================
 
+## Contents
+
+1. [Data Description](data-description)
+2. [Goals](goals)
+3. [Exploratory Data Analysys](exploratory-data-analysis)
+4. [Building a model](building-a-model-to-answer-the-questions)
+5. [Results](results)
+
 ## Data Description
 
 Data Description:
@@ -30,7 +38,7 @@ The data comes from direct marketing efforts of a European banking institution. 
 
 $y$ - has the client subscribed to a term deposit? (binary)
 
-### Goal(s):
+## Goals:
 
 - Predict if the customer will subscribe (yes/no) to a term deposit (variable y)
 - Find customers who are more likely to buy the investment product. Determine the segment(s) of customers our client should prioritize.
