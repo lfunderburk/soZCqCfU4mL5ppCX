@@ -84,7 +84,42 @@ No missing information was found. Data contained both numerical and categorical 
 
 ### Pipeline development
 
+I used a column preprocessor with two steps:
+
+1. Standard Scaler on numerical columns
+2. OneHotEnconder on categorical columns
+
+And XGBoost classifier to predict whether the client subscribed to a term deposit.
+
 ![](/notebooks/pipeline_diagram.png)
+
+## Results
+
+Removing 'month','day','contact' as attributed from the training data with the above pipeline yielded
+
+```
+5-fold Cross-validation Accuracy: 0.9236249999999998
+Success: The average accuracy is above or equal to the success metric.
+
+Accuracy: 0.9309166666666666
+Classification Report:
+               precision    recall  f1-score   support
+
+           0       0.94      0.98      0.96     11128
+           1       0.55      0.26      0.36       872
+
+    accuracy                           0.93     12000
+   macro avg       0.75      0.62      0.66     12000
+weighted avg       0.92      0.93      0.92     12000
+```
+
+With the following feature importances
+
+![](./reports/figures/feature-importances.png)
+
+The following breakdown in attibutes of customers was observed for customers deemed "high priority" using a threshold of 70%
+
+![](./reports/figures/segmentation.png)
 
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
