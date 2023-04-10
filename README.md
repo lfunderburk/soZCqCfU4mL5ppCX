@@ -95,7 +95,7 @@ And XGBoost classifier to predict whether the client subscribed to a term deposi
 
 ## Results
 
-Removing 'month','day','contact' as attributed from the training data with the above pipeline yielded
+Removing `month`,`day`,`contact` as attributed from the training data with the above pipeline yielded
 
 ```
 5-fold Cross-validation Accuracy: 0.9236249999999998
@@ -121,5 +121,14 @@ The following breakdown in attibutes of customers was observed for customers dee
 
 ![](/reports/figures/customer-segmentation.png)
 
+## Conclusion
+
+#### Find customers who are more likely to buy the investment product. Determine the segment(s) of customers our client should prioritize.
+
+Customers holding a management, technician, admin roles, or working in services and blue collar jobs should be prioritized. Look for customers that completed secondary education, and are either maried or single. Prioritize customers that have not defaulted, and do not have a loan. 
+
+#### What makes the customers buy? 
+
+Customers that do not own housing or loans, and that spend time speaking with representatives about the program are most influenced to buy. Increase time speaking with them through various means about the investment opportunity. 
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
