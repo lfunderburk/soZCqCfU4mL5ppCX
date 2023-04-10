@@ -84,7 +84,7 @@ No missing information was found. Data contained both numerical and categorical 
 
 ### Pipeline development
 
-[Download Page](/notebooks/pipeline_diagram.html)
+[Download Page](/notebooks/pipeline_diagram.png)
 
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
