@@ -72,5 +72,19 @@ The breakdown of customers with a term deposit is broken down quite similarly, w
 
 Customers between 30 and 39 appeared to represent a large percentage of customers with a term deposit, whether they were single or married. Of those customers that were single, customers aged 20 to 29 were the next most represented group. Of those customers that were married, those aged 40-59 were the next most represented group. 
 
+## Building a model to answer the questions:
+
+- Predict if the customer will subscribe (yes/no) to a term deposit (variable y)
+- Find customers who are more likely to buy the investment product. Determine the segment(s) of customers our client should prioritize.
+- What makes the customers buy? 
+
+### Data preprocessing
+
+No missing information was found. Data contained both numerical and categorical attributes. 
+
+### Pipeline development
+
+[Download Page](/notebooks/pipeline_diagram.html)
+
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
