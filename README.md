@@ -38,26 +38,25 @@ $y$ - has the client subscribed to a term deposit? (binary)
 
 ## Exploratory data analysis
 
-### Find the total number of customers in each job category 
-
-![](./reports/figures/num_customers_job.png)
-
-### Find the total number of customers in each marital status
-
-![](./reports/figures/num_customers_marital.png)
-
-### Find the total number of customers in each education level
-
-![](./reports/figures/num_customers_education.png)
-
-### Find the total number of customers in each housing loan status
-
-![](./reports/figures/num_customers_housing.png)
-
 ### Find the number of customers who subscribed to a term deposit (y = 'yes') by job category
 
 ![](./reports/figures/num_subscribers_job.png)
 
+### Find the number of customers who subscribed to a term deposit (y = 'yes') by marital status:
+
+![](./reports/figures/num_subscribers_marital.png)
+
+### Find the number of customers who subscribed to a term deposit (y = 'yes') by education level:
+
+![](./reports/figures/num_subscribers_education.png)
+
+### Find the number of customers who subscribed to a term deposit (y = 'yes') by housing loan status:
+
+![](./reports/figures/num_subscribers_housing.png)
+
+### Find the number of customers who subscribed to a term deposit (y = 'yes') by age bracket and marital status:
+
+![](./reports/figures/num_customers_m_bracket.png)
 
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
