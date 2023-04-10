@@ -186,6 +186,7 @@ if __name__=="__main__":
     # Plot the result
     plot_bar_query(df_subscribedh, 'housing','num_subscribers', 'Number of customers who subscribed to a term deposit by housing loan status', 'num_subscribers_housing.png')
 
+    # Q9 Find the number of customers who subscribed to a term deposit (y = 'yes') by age bracket and marital status:
     age_bracket_q = """
                 SELECT 
                     CASE
@@ -199,6 +200,7 @@ if __name__=="__main__":
                     marital,
                     COUNT(*) as num_customers
                 FROM term_deposit_marketing
+                WHERE y = 'yes'
                 GROUP BY age_bracket, marital
                 ORDER BY age_bracket, marital;
                 """
@@ -207,7 +209,7 @@ if __name__=="__main__":
     df_age_bracket = num_customers_category(con, age_bracket_q, ['age_bracket', 'marital', 'num_customers'])
 
     # Plot the result
-    plot_bar_query(df_age_bracket,  'num_customers', 'marital','Number of customers by marital status', 'num_customers_m_bracket.png', hue='age_bracket')
+    plot_bar_query(df_age_bracket,  'num_customers', 'marital','Number of customers who subscribed by marital status', 'num_customers_m_bracket.png', hue='age_bracket')
 
     # Close the connection
     con.close()
