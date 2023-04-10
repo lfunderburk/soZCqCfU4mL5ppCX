@@ -3,11 +3,45 @@ Success rate improvement
 
 ## Contents
 
+0. [Usage](#pipeline-usage)
 1. [Data Description](#data-description)
 2. [Goals](#goals)
 3. [Exploratory Data Analysys](#exploratory-data-analysis)
 4. [Building a model](#building-a-model-to-answer-the-questions)
 5. [Results](#results)
+
+## Pipeline usage
+
+This pipeline is built using [Ploomber](https://ploomber.io/). 
+
+Follow the instructions below:
+
+1. Ensure you have a virtual environment. 
+2. Activate virtual environment
+
+```
+git clone https://github.com/lfunderburk/soZCqCfU4mL5ppCX.git
+cd soZCqCfU4mL5ppCX
+pip install -r requirements.txt
+```
+
+Wait until installation completes. The to execute pipeline, simply run
+
+```
+ploomber build
+```
+
+It should look as follows
+
+```
+name           Ran?      Elapsed (s)    Percentage
+-------------  ------  -------------  ------------
+visualize      True          4.60473       18.5278
+train_model    True         15.7014        63.1768
+predict_model  True          4.54695       18.2953
+```
+
+Fetch results from the `models` and `reports` folders.
 
 ## Data Description
 
