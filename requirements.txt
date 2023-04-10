@@ -31,6 +31,7 @@ packaging==23.0
 pandas==1.5.3
 Pillow==9.4.0
 plotly==5.14.1
+ploomber
 psycopg2-binary==2.9.5
 pyarrow==11.0.0
 pyparsing==3.0.9

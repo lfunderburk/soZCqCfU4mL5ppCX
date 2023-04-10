@@ -1,9 +1,16 @@
+# + tags=["parameters"]
+# declare a list tasks whose products you want to use as inputs
+upstream = None
+
+
+# +
 import pandas as pd
 import duckdb
 import matplotlib.pyplot as plt
 import seaborn as sns
 import os
 
+# +
 def num_customers_category(con, query_str, colums):
 
     """
@@ -26,6 +33,7 @@ def num_customers_category(con, query_str, colums):
 
     return df_jobs
 
+# +
 def plot_bar_query(df_jobs, x, y, title, filename, hue=None):
 
     """
@@ -47,12 +55,15 @@ def plot_bar_query(df_jobs, x, y, title, filename, hue=None):
     plt.title(title)
     
     # Save the plot
-    plt.savefig(os.path.abspath(os.path.join(os.getcwd(), '..', '..', 'reports', 'figures', filename)))
+    plt.savefig(os.path.abspath(os.path.join(os.getcwd(), 'reports', 'figures', filename)))
+
+
+# -
 
 if __name__=="__main__":
 
     # Set the path to the CSV file
-    csv_path = os.path.abspath(os.path.join(os.getcwd(), '..','..', 'data', 'raw', 'term-deposit-marketing-2020.csv'))
+    csv_path = os.path.abspath(os.path.join(os.getcwd(), 'data', 'raw', 'term-deposit-marketing-2020.csv'))
 
     # Read the CSV file using pandas
     data = pd.read_csv(csv_path)
