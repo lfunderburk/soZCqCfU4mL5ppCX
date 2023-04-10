@@ -115,11 +115,11 @@ weighted avg       0.92      0.93      0.92     12000
 
 With the following feature importances
 
-![](./reports/figures/feature-importances.png)
+![](/reports/figures/feature-importances.png)
 
 The following breakdown in attibutes of customers was observed for customers deemed "high priority" using a threshold of 70%
 
-![](./reports/figures/segmentation.png)
+![](/reports/figures/customer-segmentation.png)
 
 
 <p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
