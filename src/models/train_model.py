@@ -192,6 +192,10 @@ if __name__=="__main__":
     # Split the data into training and test sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
+    # TO DO: undersample class 1 to balance the dataset
+    # Class imbalance issu: use f1 score as metric
+
+
     # Create a pipeline with preprocessing and XGBClassifier
     model = xgb.XGBClassifier(random_state=42, )
     pipeline = generate_pipeline(X, model)
