@@ -26,6 +26,9 @@ import seaborn as sns
 from imblearn.under_sampling import RandomUnderSampler
 from sklearn.ensemble import VotingClassifier, RandomForestClassifier
 from sklearn.neighbors import KNeighborsClassifier
+from imblearn.over_sampling import SMOTE
+from sklearn.base import BaseEstimator, TransformerMixin
+
 
 def generate_pipeline(X, model):
     """
@@ -48,6 +51,7 @@ def generate_pipeline(X, model):
     categorical_transformer = OneHotEncoder(handle_unknown='ignore')
     numerical_transformer = StandardScaler()
 
+
     preprocessor = ColumnTransformer(
             transformers=[
                 ('num', numerical_transformer, numerical_cols),
@@ -56,15 +60,17 @@ def generate_pipeline(X, model):
 
 
     # create the pipeline with the preprocessor, oversampling, and the classifier
-    pipeline = Pipeline(steps=[('preprocessor', preprocessor),
-                                ('classifier', model)])
+    pipeline = Pipeline(steps=[
+        ('preprocessor', preprocessor),
+        ('classifier', model)
+    ])
         
     return pipeline
 
 
 
 # +
-def perform_cross_validation(X, y, pipeline, cv=5, scoring='f1-weighted', success_metric=0.81):
+def perform_cross_validation(X, y, pipeline, cv=5, scoring='f1_weighted', success_metric=0.81):
 
     """
 
@@ -195,21 +201,18 @@ if __name__=="__main__":
     # Split the data into training and test sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
 
-    # TO DO: undersample class 1 to balance the dataset
-    # Class imbalance issu: use f1 score as metric
-
-    # Define the undersampler
+    # Define the undersampler and oversampler
     undersampler = RandomUnderSampler(random_state=42)
 
     # Undersample the majority class
     X_resampled, y_resampled = undersampler.fit_resample(X_train, y_train)
 
+ 
     # Create a pipeline with preprocessing, oversampling, and the classifier
-    #model = SVC(random_state=42)
     # Set up model pipeline
-    clf1 = KNeighborsClassifier(6,)
-    clf2 = SVC(random_state=42)
-    clf3 = RandomForestClassifier(max_depth=100, n_estimators=10, max_features=1, random_state=42)
+    clf1 = KNeighborsClassifier(2)
+    clf2 = SVC(random_state=42, probability=True)
+    clf3 = RandomForestClassifier(random_state=42)
     clf4 = xgb.XGBClassifier(random_state=42)
     classifiers = {
                    "KNN": clf1, 
@@ -222,26 +225,22 @@ if __name__=="__main__":
                                         ('knn', clf1), 
                                          ('svm', clf2), 
                                          ('dt', clf3),
-                                         ('xgb',clf4)], voting='hard')
+                                         ('xgb',clf4)], voting='soft')
 
 
     pipeline = generate_pipeline(X_resampled, eclf1)
     # Train the pipeline
-    pipeline.fit(X_train, y_train)
+    pipeline.fit(X_resampled, y_resampled)
 
-    y_pred = pipeline.predict(X_train)
-    print("Weighted average F1 score", f1_score(y_train, y_pred, average='weighted'))
-    print("Macro average F1 score", f1_score(y_train, y_pred, average='macro'))
-    print("Micro average F1 score", f1_score(y_train, y_pred, average='micro'))
+    y_pred = pipeline.predict(X_test)
+    print("Weighted average F1 score", f1_score(y_test, y_pred, average='weighted'))
+    print("Macro average F1 score", f1_score(y_test, y_pred, average='macro'))
+    print("Micro average F1 score", f1_score(y_test, y_pred, average='micro'))
 
 
     # Perform cross-validation
     perform_cross_validation(X_resampled, y_resampled, pipeline, cv=5, scoring='f1', success_metric=0.81)
-    # pipeline = generate_pipeline(X, model)
-
-    # # Perform cross-validation
-    # perform_cross_validation(X_train, y_train, pipeline)
-
+    
     # Fit the model
     pipeline.fit(X_resampled, y_resampled)
 
@@ -253,11 +252,8 @@ if __name__=="__main__":
     print("Classification Report:\n", classification_report(y_test, y_pred))
 
     # # Generate ROC curve
-    # roc_curve_save_plot(pipeline, X_test, y_test)
-
-    # # # Generate feature importances
-    # generate_feature_importances(pipeline, X, X_train, y_train)
-
+    roc_curve_save_plot(pipeline, X_test, y_test)
+    
     # # Save the model
     save_model(pipeline)
 

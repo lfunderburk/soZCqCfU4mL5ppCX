@@ -80,7 +80,7 @@ if __name__ == "__main__":
     data['y'] = data['y'].apply(lambda x: 1 if x == 'yes' else 0)
 
     # Define feature columns and target column
-    X = data.drop(columns=['y','month','day','contact'])
+    X = data.drop(columns=['y'])
     y = data['y']
 
     # For a new customer
