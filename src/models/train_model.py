@@ -203,15 +203,19 @@ if __name__=="__main__":
 
     # Define the undersampler and oversampler
     undersampler = RandomUnderSampler(random_state=42)
-
+    # Create the SMOTE transformer
+    oversampler = SMOTE(random_state=42)
+    
     # Undersample the majority class
     X_resampled, y_resampled = undersampler.fit_resample(X_train, y_train)
 
  
     # Create a pipeline with preprocessing, oversampling, and the classifier
     # Set up model pipeline
+    # Define the cost matrix
+    cost_matrix = [[0, 1], [10, 0]]
     clf1 = KNeighborsClassifier(2)
-    clf2 = SVC(random_state=42, probability=True)
+    clf2 = SVC(random_state=42, probability=True, kernel='linear', class_weight='balanced')
     clf3 = RandomForestClassifier(random_state=42)
     clf4 = xgb.XGBClassifier(random_state=42)
     classifiers = {
@@ -231,6 +235,7 @@ if __name__=="__main__":
     pipeline = generate_pipeline(X_resampled, eclf1)
     # Train the pipeline
     pipeline.fit(X_resampled, y_resampled)
+    
 
     y_pred = pipeline.predict(X_test)
     print("Weighted average F1 score", f1_score(y_test, y_pred, average='weighted'))
