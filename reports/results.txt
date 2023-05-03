@@ -1,0 +1,23 @@
+Best parameters: {'undersampler__sampling_strategy': 'not majority', 'preprocessor': ColumnTransformer(transformers=[('num', StandardScaler(),
+                                 ['age', 'balance', 'day', 'duration',
+                                  'campaign']),
+                                ('cat', OneHotEncoder(handle_unknown='ignore'),
+                                 ['job', 'marital', 'education', 'default',
+                                  'housing', 'loan', 'contact', 'month'])]), 'classifier__subsample': 0.8, 'classifier__scale_pos_weight': 1, 'classifier__reg_lambda': 0, 'classifier__reg_alpha': 1, 'classifier__n_estimators': 75, 'classifier__max_depth': 7, 'classifier__learning_rate': 0.1, 'classifier__colsample_bytree': 0.5}
+Cross-validated accuracy score on training data: 0.9296
+
+Weighted average F1 score 0.9311178658922542
+Macro average F1 score 0.7593392488747186
+Micro average F1 score 0.927
+
+Accuracy: 0.927
+Classification Report:
+              precision    recall  f1-score   support
+
+           0       0.97      0.95      0.96     11131
+           1       0.50      0.64      0.56       869
+
+    accuracy                           0.93     12000
+   macro avg       0.73      0.79      0.76     12000
+weighted avg       0.94      0.93      0.93     12000
+
