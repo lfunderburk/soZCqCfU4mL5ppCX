@@ -53,7 +53,7 @@ def generate_pipeline(X):
     oversampler = SMOTE(random_state=12)
 
     # Define the classifier
-    clf = RandomForestClassifier(
+    clf = xgb.XGBClassifier(
         n_jobs=-1,
         random_state=42,
     )
@@ -76,10 +76,13 @@ def generate_pipeline(X):
                                                           X.select_dtypes(include=["object"]).columns.tolist())])],
         "undersampler__sampling_strategy": ['majority', 'not minority', 'not majority', 'all'],
         "classifier__n_estimators": [50, 75, 100],
+        "classifier__learning_rate": [0.01, 0.05, 0.1],
         "classifier__max_depth": [3, 5, 7],
-        "classifier__min_samples_split": [2, 5, 10],
-        "classifier__min_samples_leaf": [1, 2, 4],
-        "classifier__bootstrap": [True, False]
+        "classifier__subsample": [0.5, 0.8, 1],
+        "classifier__colsample_bytree": [0.5, 0.8, 1],
+        "classifier__reg_alpha": [0, 0.1, 1],
+        "classifier__reg_lambda": [0, 0.1, 1],
+        "classifier__scale_pos_weight": [1, 5, 10],
     }
 
     # Create the RandomizedSearchCV object
@@ -130,7 +133,7 @@ def save_model(pipeline):
     joblib.dump(pipeline, Path(result_path,"pipeline.joblib"))
 
     # Save the feature importances plot to a file
-    generate_feature_importances(pipeline, X, X_train, y_train)
+    generate_feature_importances(pipeline, X)
 
 # +
 def roc_curve_save_plot(pipeline, X_test, y_test):
@@ -214,7 +217,7 @@ if __name__=="__main__":
 
 
     # Perform cross-validation
-    perform_cross_validation(X_train, y_train, pipeline, cv=5, scoring='f1', success_metric=0.81)
+    #perform_cross_validation(X_train, y_train, pipeline, cv=5, scoring='f1', success_metric=0.81)
     
     # Evaluate the model
     print("Accuracy:", accuracy_score(y_test, y_pred))
