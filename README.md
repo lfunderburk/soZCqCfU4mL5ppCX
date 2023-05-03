@@ -126,14 +126,8 @@ No missing information was found. Data contained both numerical and categorical 
 
 ### Pipeline development
 
-I used a column preprocessor with two steps:
 
-1. Standard Scaler on numerical columns
-2. OneHotEnconder on categorical columns
-
-And XGBoost classifier to predict whether the client subscribed to a term deposit.
-
-![](/notebooks/pipeline_diagram.png)
+![](/models/pipeline_diagram.png)
 
 ## Results
 
@@ -163,12 +157,18 @@ Classification Report:
     accuracy                           0.93     12000
    macro avg       0.73      0.79      0.76     12000
 weighted avg       0.94      0.93      0.93     12000
-
-
-         
+        
 ```
 
+### Feature importances
+
+![](/reports/figures/feature-importances.png)
+
+
+### High priority customers
+
 The following breakdown in attibutes of customers was observed for customers deemed "high priority" using a threshold of 70%
+
 
 ![](/reports/figures/customer-segmentation.png)
 
