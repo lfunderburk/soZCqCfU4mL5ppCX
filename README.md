@@ -140,21 +140,30 @@ And XGBoost classifier to predict whether the client subscribed to a term deposi
 
 
 ```
-Weighted average F1 score 0.8967010839276994
-Macro average F1 score 0.716810046708189
-Micro average F1 score 0.87325
-5-fold Cross-validation F1-score: 0.88
-Success: The average accuracy is above or equal to the success metric.
-Accuracy: 0.87325
+Best parameters: {'undersampler__sampling_strategy': 'not majority', 'preprocessor': ColumnTransformer(transformers=[('num', StandardScaler(),
+                                 ['age', 'balance', 'day', 'duration',
+                                  'campaign']),
+                                ('cat', OneHotEncoder(handle_unknown='ignore'),
+                                 ['job', 'marital', 'education', 'default',
+                                  'housing', 'loan', 'contact', 'month'])]), 'classifier__subsample': 0.8, 'classifier__scale_pos_weight': 1, 'classifier__reg_lambda': 0, 'classifier__reg_alpha': 1, 'classifier__n_estimators': 75, 'classifier__max_depth': 7, 'classifier__learning_rate': 0.1, 'classifier__colsample_bytree': 0.5}
+                                  
+Cross-validated accuracy score on training data: 0.9296
+
+Weighted average F1 score 0.9311178658922542
+Macro average F1 score 0.7593392488747186
+Micro average F1 score 0.927
+
+Accuracy: 0.927
 Classification Report:
-               precision    recall  f1-score   support
+              precision    recall  f1-score   support
 
-           0       0.99      0.87      0.93     11128
-           1       0.35      0.89      0.51       872
+           0       0.97      0.95      0.96     11131
+           1       0.50      0.64      0.56       869
 
-    accuracy                           0.87     12000
-   macro avg       0.67      0.88      0.72     12000
-weighted avg       0.94      0.87      0.90     12000
+    accuracy                           0.93     12000
+   macro avg       0.73      0.79      0.76     12000
+weighted avg       0.94      0.93      0.93     12000
+
 
          
 ```
