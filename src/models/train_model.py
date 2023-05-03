@@ -206,27 +206,32 @@ if __name__=="__main__":
     # Split the data into training and test sets
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=12)
 
-    pipeline = generate_pipeline(X)
+    tune_model = generate_pipeline(X)
     # Train the pipeline
-    pipeline.fit(X_train, y_train)
+    tune_model.fit(X_train, y_train)
+
+    best_model = tune_model.best_estimator_
+    best_score = tune_model.best_score_
+    y_pred = best_model.predict(X_test)
     
-    y_pred = pipeline.predict(X_test)
+    # Printing results
+    print("Best parameters:", tune_model.best_params_)
+    print("Cross-validated accuracy score on training data: {:0.4f}".format(tune_model.best_score_))
+    print()
+    
     print("Weighted average F1 score", f1_score(y_test, y_pred, average='weighted'))
     print("Macro average F1 score", f1_score(y_test, y_pred, average='macro'))
     print("Micro average F1 score", f1_score(y_test, y_pred, average='micro'))
 
-
-    # Perform cross-validation
-    #perform_cross_validation(X_train, y_train, pipeline, cv=5, scoring='f1', success_metric=0.81)
-    
-    # Evaluate the model
+     # Evaluate the model
     print("Accuracy:", accuracy_score(y_test, y_pred))
     print("Classification Report:\n", classification_report(y_test, y_pred))
 
+   
     # # Generate ROC curve
-    roc_curve_save_plot(pipeline, X_test, y_test)
+    roc_curve_save_plot(best_model, X_test, y_test)
     
     # # Save the model
-    save_model(pipeline)
+    save_model(best_model)
 
 
