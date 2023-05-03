@@ -20,12 +20,13 @@ from sklearn.metrics import (
     accuracy_score,
     f1_score,
     make_scorer,
+    confusion_matrix
 )
 from sklearn.model_selection import (
     train_test_split,
     cross_val_score,
     StratifiedKFold,
-    GridSearchCV,
+    RandomizedSearchCV,
 )
 from pathlib import Path
 from imblearn.pipeline import Pipeline
@@ -34,8 +35,6 @@ from imblearn.over_sampling import SMOTE
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.utils import estimator_html_repr
-from sklearn.model_selection import RandomizedSearchCV
-from sklearn.ensemble import RandomForestClassifier
 
 def generate_pipeline(X):
     """
@@ -227,7 +226,23 @@ if __name__=="__main__":
     print("Accuracy:", accuracy_score(y_test, y_pred))
     print("Classification Report:\n", classification_report(y_test, y_pred))
 
-   
+    with open(os.path.abspath(os.path.join(os.getcwd(), 'reports', "results.txt")), "w") as file:
+        file.write("Best parameters: {}\n".format(tune_model.best_params_))
+        file.write("Cross-validated accuracy score on training data: {:0.4f}\n\n".format(tune_model.best_score_))
+        
+        file.write("Weighted average F1 score {}\n".format(f1_score(y_test, y_pred, average='weighted')))
+        file.write("Macro average F1 score {}\n".format(f1_score(y_test, y_pred, average='macro')))
+        file.write("Micro average F1 score {}\n\n".format(f1_score(y_test, y_pred, average='micro')))
+
+        file.write("Accuracy: {}\n".format(accuracy_score(y_test, y_pred)))
+        file.write("Classification Report:\n{}\n".format(classification_report(y_test, y_pred)))
+
+    file.close()
+
+    # Generate confusion matrix
+    confusion_matrix(X_test, y_test, cmap=plt.cm.Blues)
+    plt.savefig(os.path.abspath(os.path.join(os.getcwd(), 'reports', 'figures', "confusion-matrix.png")))
+
     # # Generate ROC curve
     roc_curve_save_plot(best_model, X_test, y_test)
     
