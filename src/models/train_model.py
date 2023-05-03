@@ -34,7 +34,8 @@ from imblearn.over_sampling import SMOTE
 from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.utils import estimator_html_repr
-
+from sklearn.model_selection import RandomizedSearchCV
+from sklearn.ensemble import RandomForestClassifier
 
 def generate_pipeline(X):
     """
@@ -44,7 +45,7 @@ def generate_pipeline(X):
         X (pandas.DataFrame): The input data.
 
     Returns:
-        A GridSearchCV object.
+        A RandomizedSearchCV object.
     """
 
     # Define the undersampler and oversampler
@@ -52,7 +53,7 @@ def generate_pipeline(X):
     oversampler = SMOTE(random_state=12)
 
     # Define the classifier
-    clf = xgb.XGBClassifier(
+    clf = RandomForestClassifier(
         n_jobs=-1,
         random_state=42,
     )
@@ -75,23 +76,22 @@ def generate_pipeline(X):
                                                           X.select_dtypes(include=["object"]).columns.tolist())])],
         "undersampler__sampling_strategy": ['majority', 'not minority', 'not majority', 'all'],
         "classifier__n_estimators": [50, 75, 100],
-        "classifier__learning_rate": [0.01, 0.05, 0.1],
         "classifier__max_depth": [3, 5, 7],
-        "classifier__subsample": [0.5, 0.8, 1],
-        "classifier__colsample_bytree": [0.5, 0.8, 1],
-        "classifier__reg_alpha": [0, 0.1, 1],
-        "classifier__reg_lambda": [0, 0.1, 1],
-        "classifier__scale_pos_weight": [1, 5, 10],
+        "classifier__min_samples_split": [2, 5, 10],
+        "classifier__min_samples_leaf": [1, 2, 4],
+        "classifier__bootstrap": [True, False]
     }
 
-    # Create the GridSearchCV object
-    clf = GridSearchCV(
+    # Create the RandomizedSearchCV object
+    clf = RandomizedSearchCV(
         pipeline,
         parameters,
+        n_iter=100,  # Number of parameter settings that are sampled. n_iter trades off runtime vs quality of the solution.
         cv=StratifiedKFold(n_splits=5, shuffle=True, random_state=42),
         scoring="f1_weighted",
         n_jobs=-1,
         verbose=1,
+        random_state=42
     )
 
     return clf
