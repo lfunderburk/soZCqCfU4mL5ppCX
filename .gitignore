@@ -132,4 +132,6 @@ dmypy.json
 */.DS_Store
 *.DS_Store
 *.metadata
-*.ipynb 
+notebooks/train_model.ipynb
+notebooks/visualize.ipynb
+notebooks/predict_model.ipynb

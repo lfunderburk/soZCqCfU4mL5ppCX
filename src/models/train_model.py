@@ -240,7 +240,8 @@ if __name__=="__main__":
     file.close()
 
     # Generate confusion matrix
-    confusion_matrix(X_test, y_test)
+    plt.figure(figsize=(10, 10))
+    fig = confusion_matrix(y_test, y_pred)
     plt.savefig(os.path.abspath(os.path.join(os.getcwd(), 'reports', 'figures', "confusion-matrix.png")))
 
     # # Generate ROC curve
