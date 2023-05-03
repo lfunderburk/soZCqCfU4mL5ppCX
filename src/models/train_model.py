@@ -2,114 +2,122 @@
 # declare a list tasks whose products you want to use as inputs
 upstream = None
 
-
 # +
-import pandas as pd
-from sklearn.svm import SVC
 import os
-import xgboost as xgb
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.metrics import classification_report, accuracy_score
-from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline
-from sklearn.model_selection import cross_val_score
 from pathlib import Path
-from sklearn.utils import estimator_html_repr
-import imgkit
 import joblib
-import imgkit
 from sklearn.metrics import DetCurveDisplay, RocCurveDisplay, f1_score
 import matplotlib.pyplot as plt
 import seaborn as sns
+import pandas as pd
+import xgboost as xgb
+import seaborn as sns
+import joblib
+import matplotlib.pyplot as plt
+import imgkit
+from sklearn.metrics import (
+    classification_report,
+    accuracy_score,
+    f1_score,
+    make_scorer,
+)
+from sklearn.model_selection import (
+    train_test_split,
+    cross_val_score,
+    StratifiedKFold,
+    GridSearchCV,
+)
+from pathlib import Path
+from imblearn.pipeline import Pipeline
 from imblearn.under_sampling import RandomUnderSampler
-from sklearn.ensemble import VotingClassifier, RandomForestClassifier
-from sklearn.neighbors import KNeighborsClassifier
 from imblearn.over_sampling import SMOTE
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.compose import ColumnTransformer
+from sklearn.preprocessing import StandardScaler, OneHotEncoder
+from sklearn.utils import estimator_html_repr
 
 
-def generate_pipeline(X, model):
+def generate_pipeline(X):
     """
-    
-    This function generates a pipeline with preprocessing, oversampling, and the classifier.
+    Generates the pipeline with preprocessing and a classifier.
 
     Args:
-        X (pandas.DataFrame): DataFrame containing the features
-        model (sklearn model): Model to be used for classification
+        X (pandas.DataFrame): The input data.
 
     Returns:
-        pipeline (sklearn.pipeline.Pipeline): Pipeline with preprocessing, oversampling, and the classifier
-    """
-    
-    # Identify categorical and numerical columns
-    categorical_cols = X.select_dtypes(include=['object']).columns.tolist()
-    numerical_cols = X.select_dtypes(exclude=['object']).columns.tolist()
-
-    # Define transformers for categorical and numerical columns
-    categorical_transformer = OneHotEncoder(handle_unknown='ignore')
-    numerical_transformer = StandardScaler()
-
-
-    preprocessor = ColumnTransformer(
-            transformers=[
-                ('num', numerical_transformer, numerical_cols),
-                ('cat', categorical_transformer, categorical_cols),
-            ])
-
-
-    # create the pipeline with the preprocessor, oversampling, and the classifier
-    pipeline = Pipeline(steps=[
-        ('preprocessor', preprocessor),
-        ('classifier', model)
-    ])
-        
-    return pipeline
-
-
-
-# +
-def perform_cross_validation(X, y, pipeline, cv=5, scoring='f1_weighted', success_metric=0.81):
-
+        A GridSearchCV object.
     """
 
-    This function performs cross-validation and prints the average accuracy.
+    # Define the undersampler and oversampler
+    undersampler = RandomUnderSampler(random_state=12)
+    oversampler = SMOTE(random_state=12)
 
-    Args:
-        X (pandas.DataFrame): DataFrame containing the features
-        y (pandas.Series): Series containing the target variable
-        pipeline (sklearn.pipeline.Pipeline): Pipeline with preprocessing,and the classifier
-        cv (int): Number of folds for cross-validation
-        scoring (str): Metric to be used for cross-validation
+    # Define the classifier
+    clf = xgb.XGBClassifier(
+        n_jobs=-1,
+        random_state=42,
+    )
 
-    """
+    # Define the pipeline
+    pipeline = Pipeline(
+        steps=[
+            ("preprocessor", None),
+            ("undersampler", undersampler),
+            ("oversampler", oversampler),
+            ("classifier", clf),
+        ]
+    )
 
-    # Perform 5-fold cross-validation
-    cv_scores = cross_val_score(pipeline, X, y, cv=cv, scoring=scoring)
+    # Define the parameter grid for hyperparameter tuning
+    parameters = {
+        "preprocessor": [ColumnTransformer(transformers=[("num", StandardScaler(), 
+                                                          X.select_dtypes(exclude=["object"]).columns.tolist()), 
+                                                         ("cat", OneHotEncoder(handle_unknown='ignore'), 
+                                                          X.select_dtypes(include=["object"]).columns.tolist())])],
+        "undersampler__sampling_strategy": ['majority', 'not minority', 'not majority', 'all'],
+        "classifier__n_estimators": [50, 75, 100],
+        "classifier__learning_rate": [0.01, 0.05, 0.1],
+        "classifier__max_depth": [3, 5, 7],
+        "classifier__subsample": [0.5, 0.8, 1],
+        "classifier__colsample_bytree": [0.5, 0.8, 1],
+        "classifier__reg_alpha": [0, 0.1, 1],
+        "classifier__reg_lambda": [0, 0.1, 1],
+        "classifier__scale_pos_weight": [1, 5, 10],
+    }
 
-    # Calculate the average accuracy
-    avg_accuracy = round(cv_scores.mean(),2)
+    # Create the GridSearchCV object
+    clf = GridSearchCV(
+        pipeline,
+        parameters,
+        cv=StratifiedKFold(n_splits=5, shuffle=True, random_state=42),
+        scoring="f1_weighted",
+        n_jobs=-1,
+        verbose=1,
+    )
 
-    print("5-fold Cross-validation F1-score:", avg_accuracy)
+    return clf
 
-    if avg_accuracy >= success_metric:
-        print("Success: The average accuracy is above or equal to the success metric.")
+
+def perform_cross_validation(X, y, pipeline, cv=5, scoring="f1_weighted", success_metric=0.81):
+    f1_scorer = make_scorer(f1_score, average=scoring)
+    cv_scores = cross_val_score(
+        pipeline, X, y, cv=cv, scoring=f1_scorer, n_jobs=-1
+    )
+    avg_f1_score = round(cv_scores.mean(), 2)
+
+    if avg_f1_score >= success_metric:
+        print("Success: The average F1 score is above or equal to the success metric.")
     else:
-        print("Failure: The average accuracy is below the success metric.")
+        print("Failure: The average F1 score is below the success metric.")
 
-# +
+    return avg_f1_score
+
 def save_model(pipeline):
-
     """
-
     This function saves the pipeline diagram and the pipeline sklearn object into the models folder
 
     Args:
         pipeline (sklearn.pipeline.Pipeline): Pipeline with preprocessing,and the classifier
-
     """
-
     # Save the pipeline diagram to a file
     result_path = os.path.abspath(os.path.join(os.getcwd(), 'models'))
     with open(Path(result_path, "pipeline_diagram.html"), "w") as f:
@@ -117,24 +125,27 @@ def save_model(pipeline):
 
     # Convert the HTML to an image
     imgkit.from_file(str(Path(result_path, "pipeline_diagram.html")), str(Path(result_path, "pipeline_diagram.png")))
-
+    
     # Save the pipeline to a file
     joblib.dump(pipeline, Path(result_path,"pipeline.joblib"))
+
+    # Save the feature importances plot to a file
+    generate_feature_importances(pipeline, X, X_train, y_train)
 
 # +
 def roc_curve_save_plot(pipeline, X_test, y_test):
     """
-    
-    This function generates a ROC curve and saves it to the figures folder.
+    This function saves the ROC and DET curves to a file
 
     Args:
         pipeline (sklearn.pipeline.Pipeline): Pipeline with preprocessing,and the classifier
-        X_test (pandas.DataFrame): DataFrame containing the features of the test set
-        y_test (pandas.Series): Series containing the target variable of the test set
-
+        X_test (pandas.DataFrame): The test data.
+        y_test (pandas.Series): The test labels.
     """
 
+    # Plot the ROC and DET curves
     fig, [ax_roc, ax_det] = plt.subplots(1, 2, figsize=(11, 5))
+
 
     RocCurveDisplay.from_estimator(pipeline, X_test, y_test, ax=ax_roc)
     DetCurveDisplay.from_estimator(pipeline, X_test, y_test, ax=ax_det)
@@ -144,43 +155,32 @@ def roc_curve_save_plot(pipeline, X_test, y_test):
 
     plt.legend()
 
-    # save the plot as a file
-    plt.savefig(os.path.abspath(os.path.join(os.getcwd(), 'reports', 'figures', "roc")))
+    plt.savefig(os.path.abspath(os.path.join(os.getcwd(), 'reports', 'figures', "roc.png")))
+
 
 
 # -
 
-def generate_feature_importances(pipeline,X, X_train, y_train):
+def generate_feature_importances(pipeline, X):
     """
-    
-    This function generates a bar plot of feature importances and saves it to the figures folder.
+    This function generates the feature importances plot
 
     Args:
         pipeline (sklearn.pipeline.Pipeline): Pipeline with preprocessing,and the classifier
-        X (pandas.DataFrame): DataFrame containing the features
-        X_train (pandas.DataFrame): DataFrame containing the features of the training set
-        y_train (pandas.Series): Series containing the target variable of the training set
+        X (pandas.DataFrame): The input data.
 
+    Returns:
+        A GridSearchCV object.
     """
 
-
-    # Get feature importances
     importances = pipeline.named_steps['classifier'].feature_importances_
-
-    # Get feature names
     numerical_feature_names = X.select_dtypes(exclude=['object']).columns.tolist()
     categorical_feature_names = pipeline.named_steps['preprocessor'].named_transformers_['cat'].get_feature_names_out(input_features=X.select_dtypes(include=['object']).columns.tolist())
-
     feature_names = numerical_feature_names + categorical_feature_names.tolist()
 
-    # Create a dataframe with feature names and importances
     feature_importances = pd.DataFrame({'feature': feature_names, 'importance': importances})
-
-    # Sort the dataframe by feature importance
     feature_importances = feature_importances.sort_values('importance', ascending=False).reset_index(drop=True)
 
-
-    # Plot the feature importances
     plt.figure(figsize=(10, 10))
     sns.barplot(data=feature_importances, x='importance', y='feature')
     plt.title('Feature Importances')
@@ -191,52 +191,22 @@ if __name__=="__main__":
     csv_path = os.path.abspath(os.path.join(os.getcwd(),  'data', 'raw', 'term-deposit-marketing-2020.csv'))
     data = pd.read_csv(csv_path)
 
-    # Prepare target variable
+     # drop the rows that have a z-score greater than 3 for only class '0'
+    #data = data[(z < 3).all(axis=1) | (data['y'] != 0)]
     data['y'] = data['y'].apply(lambda x: 1 if x == 'yes' else 0)
 
     # Define feature columns and target column
     X = data.drop(columns=['y'])
     y = data['y']
 
+    
     # Split the data into training and test sets
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=42)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, stratify=y, random_state=12)
 
-    # Define the undersampler and oversampler
-    undersampler = RandomUnderSampler(random_state=42)
-    # Create the SMOTE transformer
-    oversampler = SMOTE(random_state=42)
-    
-    # Undersample the majority class
-    X_resampled, y_resampled = undersampler.fit_resample(X_train, y_train)
-
- 
-    # Create a pipeline with preprocessing, oversampling, and the classifier
-    # Set up model pipeline
-    # Define the cost matrix
-    cost_matrix = [[0, 1], [10, 0]]
-    clf1 = KNeighborsClassifier(2)
-    clf2 = SVC(random_state=42, probability=True, kernel='linear', class_weight='balanced')
-    clf3 = RandomForestClassifier(random_state=42)
-    clf4 = xgb.XGBClassifier(random_state=42)
-    classifiers = {
-                   "KNN": clf1, 
-                   "SVM": clf2,
-                   "RFC": clf3,
-                   "XGB": clf4
-                }
-
-    eclf1 = VotingClassifier(estimators=[
-                                        ('knn', clf1), 
-                                         ('svm', clf2), 
-                                         ('dt', clf3),
-                                         ('xgb',clf4)], voting='soft')
-
-
-    pipeline = generate_pipeline(X_resampled, eclf1)
+    pipeline = generate_pipeline(X)
     # Train the pipeline
-    pipeline.fit(X_resampled, y_resampled)
+    pipeline.fit(X_train, y_train)
     
-
     y_pred = pipeline.predict(X_test)
     print("Weighted average F1 score", f1_score(y_test, y_pred, average='weighted'))
     print("Macro average F1 score", f1_score(y_test, y_pred, average='macro'))
@@ -244,14 +214,8 @@ if __name__=="__main__":
 
 
     # Perform cross-validation
-    perform_cross_validation(X_resampled, y_resampled, pipeline, cv=5, scoring='f1', success_metric=0.81)
+    perform_cross_validation(X_train, y_train, pipeline, cv=5, scoring='f1', success_metric=0.81)
     
-    # Fit the model
-    pipeline.fit(X_resampled, y_resampled)
-
-    # Make predictions on the test set
-    y_pred = pipeline.predict(X_test)
-
     # Evaluate the model
     print("Accuracy:", accuracy_score(y_test, y_pred))
     print("Classification Report:\n", classification_report(y_test, y_pred))
