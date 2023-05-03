@@ -129,9 +129,9 @@ No missing information was found. Data contained both numerical and categorical 
 
 ![](/models/pipeline_diagram.png)
 
+Furthermore, I performed a randomized search on a set of given hyperparameters, with a 5 StratifiedKFold setting (5 splits, with shuffling). With a focus on weighted f1 score due to class imbalance. 
+
 ## Results
-
-
 
 ```
 Best parameters: {'undersampler__sampling_strategy': 'not majority', 'preprocessor': ColumnTransformer(transformers=[('num', StandardScaler(),
